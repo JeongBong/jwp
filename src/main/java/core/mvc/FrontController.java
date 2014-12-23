@@ -35,6 +35,7 @@ public class FrontController extends HttpServlet {
 		
 		Controller controller = rm.findController(urlExceptParameter(req.getRequestURI()));
 		ModelAndView mav;
+		
 		try {
 			mav = controller.execute(req, resp);
 			View view = mav.getView();

@@ -1,5 +1,6 @@
 package next.dao;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import next.model.Question;
 import core.jdbc.JdbcTemplate;
+import core.jdbc.PreparedStatementSetter;
 import core.jdbc.RowMapper;
 
 public class QuestionDao {
@@ -59,5 +61,12 @@ public class QuestionDao {
 		};
 		
 		return jdbcTemplate.executeQuery(sql, rm, questionId);
+	}
+
+	public void increaseCountOfComment(long questionId) {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate();
+		String sql = "UPDATE QUESTIONS SET countOfComment=countOfComment+1 WHERE questionId=?";
+	
+		jdbcTemplate.executeUpdate(sql,questionId);
 	}
 }

@@ -9,34 +9,37 @@ import next.dao.AnswerDao;
 import next.dao.QuestionDao;
 import next.model.Answer;
 import next.model.Question;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import core.mvc.AbstractController;
+import core.mvc.JsonView;
 import core.mvc.ModelAndView;
 import core.utils.ServletRequestUtils;
 
-public class ShowController extends AbstractController {
-	private static final Logger logger = LoggerFactory.getLogger(ShowController.class);
-	
+public class AddanswerController extends AbstractController{
+	AnswerDao answerDao = new AnswerDao();
 	private QuestionDao questionDao = new QuestionDao();
-	private AnswerDao answerDao = new AnswerDao();
+	List<Answer> answers;
+	Answer answer;
+	Question question;
+	int countOfComment;
 	
 	@Override
 	public ModelAndView execute(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		long questionId = ServletRequestUtils.getRequiredLongParameter(request, "questionId");
-		Question question;
-		List<Answer> answers;
-		logger.debug("questionId : {}", questionId);
-		question = questionDao.findById(questionId);
-		answers = answerDao.findAllByQuestionId(questionId);
-		ModelAndView mav = jstlView("show.jsp");
-		mav.addObject("question", question);
-		mav.addObject("answers", answers);
-//		countOfComment
 
+		String writer = request.getParameter("writer");
+		String contents = request.getParameter("contents");
+		long questionId = ServletRequestUtils.getRequiredLongParameter(request, "questionId");
+	
+		ModelAndView mav = jstlView("show.jsp");
+
+		answer = new Answer(writer, contents, questionId);
+		answerDao.insert(answer);
+		
+		questionDao.increaseCountOfComment(questionId);
+
+		mav.addObject("answers", answers);
 		return mav;
 	}
+
+	
 }
